@@ -4,6 +4,10 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+
+MAJOR_VERSION := $(shell echo $(PLATFORM_VERSION) | cut -d "." -f1)
+ANDROID_VERSION_GE_O := $(shell if [ $(MAJOR_VERSION) -ge 8 ];then echo "true";fi)
+
 LOCAL_CFLAGS += $(optee_CFLAGS)
 
 LOCAL_CFLAGS += -DDEBUGLEVEL_$(CFG_TEE_SUPP_LOG_LEVEL) \
@@ -41,5 +45,9 @@ LOCAL_CFLAGS += -DCFG_TA_GPROF_SUPPORT
 endif
 
 LOCAL_MODULE := tee-supplicant
+ifeq ($(ANDROID_VERSION_GE_O), true)
+LOCAL_VENDOR_MODULE := true
+endif
+LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_EXECUTABLE)
